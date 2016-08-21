@@ -1,6 +1,8 @@
 import { ApolloQueryResult } from 'apollo-client';
 import { ApolloError } from 'apollo-client/errors';
 
+import { ApolloClientRef } from './ApolloClientRef';
+
 import ApolloClient from 'apollo-client';
 import forIn = require('lodash.forin');
 import isEqual = require('lodash.isequal');
@@ -16,7 +18,7 @@ export interface ApolloQuery {
 }
 
 export interface ApolloOptions {
-  client: ApolloClient;
+  client: ApolloClient | ApolloClientRef;
   queries?: (component?: any) => any;
   mutations?: (component?: any) => any;
 }
@@ -43,7 +45,7 @@ export class ApolloHandle {
     mutations,
   }: ApolloHandleOptions) {
     this.component = component;
-    this.client = client;
+    this.client = client instanceof ApolloClientRef ? client.getRef() : client;
     this.queries = queries;
     this.mutations = mutations;
   }

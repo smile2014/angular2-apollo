@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { graphql } from 'angular2-apollo';
+import { Angular2Apollo, ApolloQueryPipe, ApolloQueryObservable } from 'angular2-apollo';
 import { ApolloQueryResult } from 'apollo-client';
+import { Subject } from 'rxjs/Subject';
 
 import { User } from './user.interface';
 
@@ -17,11 +18,20 @@ interface Data {
 
 @Component({
   selector: 'app',
-  template
+  template,
+  pipes: [ApolloQueryPipe],
 })
-@graphql({
-  queries: (component: AppComponent) => ({
-    data: {
+export class AppComponent implements OnInit, AfterViewInit {
+  public data: ApolloQueryObservable<Data>;
+  public firstName: string;
+  public lastName: string;
+  public nameControl = new FormControl();
+  public nameFilter: Subject<string> = new Subject<string>();
+
+  constructor(private angular2Apollo: Angular2Apollo) {}
+
+  public ngOnInit() {
+    this.data = this.angular2Apollo.watchQuery({
       query: gql`
         query getUsers($name: String) {
           users(name: $name) {
@@ -35,12 +45,21 @@ interface Data {
         }
       `,
       variables: {
-        name: component.nameFilter,
+        name: this.nameFilter,
       },
-    },
-  }),
-  mutations: (component: AppComponent) => ({
-    addUser: (firstName: any) => ({
+    });
+
+    this.nameControl.valueChanges.debounceTime(300).subscribe(name => {
+      this.nameFilter.next(name);
+    });
+  }
+
+  public ngAfterViewInit() {
+    this.nameFilter.next(null);
+  }
+
+  public newUser(firstName: string) {
+    this.angular2Apollo.mutate({
       mutation: gql`
         mutation addUser(
           $firstName: String!
@@ -61,27 +80,9 @@ interface Data {
       `,
       variables: {
         firstName,
-        lastName: component.lastName,
+        lastName: this.lastName,
       },
-    }),
-  }),
-})
-export class AppComponent implements OnInit {
-  public data: any;
-  public firstName: string;
-  public lastName: string;
-  public nameControl = new FormControl();
-  public nameFilter: string;
-  public addUser: (firstName: string) => Promise<any>;
-
-  public ngOnInit() {
-    this.nameControl.valueChanges.debounceTime(300).subscribe(name => {
-      this.nameFilter = name;
-    });
-  }
-
-  public newUser(firstName: string) {
-    this.addUser(firstName)
+    })
       .then(({ data }: ApolloQueryResult) => {
         console.log('got data', data);
 
