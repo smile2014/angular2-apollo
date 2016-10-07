@@ -15,7 +15,7 @@ import { client } from './client';
     FormsModule,
     ReactiveFormsModule,
     // Define the default ApolloClient
-    ApolloModule.withClient(client),
+    ApolloModule.forRoot(client),
   ],
   bootstrap: [AppComponent],
 })

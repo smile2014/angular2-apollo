@@ -1,5 +1,10 @@
 # Change log
 
+### vNEXT
+
+- Added `forRoot` and `forChild` for `ApolloModule` to define default Apollo client
+- **Deprecated** `ApolloModule.withClient`(use `forRoot` or `forChild` instead)
+
 ### v0.5.0
 
 - Added `subscribe` method to `Angular2Apollo` service ([PR #113](https://github.com/apollostack/angular2-apollo/pull/113))

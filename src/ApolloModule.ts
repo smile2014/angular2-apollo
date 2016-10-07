@@ -15,12 +15,28 @@ const APOLLO_PROVIDERS = [
 ];
 
 @NgModule({
-  providers: APOLLO_PROVIDERS,
   declarations: APOLLO_DIRECTIVES,
   exports: APOLLO_DIRECTIVES,
 })
 export class ApolloModule {
+  /**
+   * @deprecated
+   */
   public static withClient(client: ApolloClient): ModuleWithProviders {
+    return {
+      ngModule: ApolloModule,
+      providers: [
+        APOLLO_PROVIDERS,
+        defaultApolloClient(client),
+      ],
+    };
+  }
+
+  public static forRoot(client: ApolloClient): ModuleWithProviders {
+    return ApolloModule.withClient(client);
+  }
+
+  public static forChild(client: ApolloClient): ModuleWithProviders {
     return {
       ngModule: ApolloModule,
       providers: [
