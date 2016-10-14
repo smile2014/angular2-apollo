@@ -1,4 +1,5 @@
 build
+compiled
 coverage
 node_modules
 typings

@@ -16,5 +16,8 @@
     "typings.d.ts",
     "src/index.ts",
     "tests/index.ts"
-   ]
+  ],
+  "angularCompilerOptions": {
+    "genDir": "compiled"
+  }
 }

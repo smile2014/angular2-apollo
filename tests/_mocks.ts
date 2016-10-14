@@ -4,7 +4,7 @@ import { print } from 'graphql-tag/printer';
 
 import ApolloClient from 'apollo-client';
 
-export default function mockNetworkInterface(
+export function mockNetworkInterface(
   ...mockedResponses: MockedResponse[]
 ): NetworkInterface {
   return new MockNetworkInterface(...mockedResponses);
